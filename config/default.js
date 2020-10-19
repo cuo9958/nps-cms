@@ -22,4 +22,8 @@ module.exports = {
     },
     //服务调用的通行证
     pass_check: "123",
+    //依赖模块的地址
+    module: {
+        user: "http://127.0.0.1:18900",
+    },
 };

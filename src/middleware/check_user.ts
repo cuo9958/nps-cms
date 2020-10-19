@@ -1,5 +1,10 @@
 import { ictx } from "../extends";
 import { ErrorData } from "../service/utils";
+import NSPUtils from "nsp-utils";
+import config from "config";
+
+const ModuleConfig: any = config.get("module");
+const usermudole = new NSPUtils.UserModule({ baseUrl: ModuleConfig.user });
 
 export function CheckUser(...UserType: number[]) {
     return async function (ctx: ictx, next) {
@@ -10,7 +15,7 @@ export function CheckUser(...UserType: number[]) {
             return (ctx.body = ErrorData("还没有登录"));
         }
         try {
-            const model = null;
+            const model = await usermudole.Auth(username, token);
             if (!model) {
                 return (ctx.body = ErrorData("还没有登录"));
             }
