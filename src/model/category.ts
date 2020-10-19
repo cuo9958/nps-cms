@@ -71,8 +71,13 @@ Category.init(
 
 export default {
     sync: (force = true) => Category.sync({ force }),
-    insert: function (model: any, pwd: string) {
-        return Category.create(Object.assign({}, model, { pwd }));
+    insert: function (model: any) {
+        return Category.create(model);
+    },
+    update(model: any, id: number) {
+        return Category.update(model, {
+            where: { id },
+        });
     },
     get: function (id: number) {
         return Category.findOne({
@@ -88,6 +93,13 @@ export default {
             limit,
             where: { pid },
             order: [["id", "desc"]],
+        });
+    },
+    del(id: number) {
+        id = id * 1;
+        if (isNaN(id) || id === 0) return null;
+        return Category.destroy({
+            where: { id },
         });
     },
 };
