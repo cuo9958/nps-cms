@@ -17,4 +17,4 @@
 
 ## 依赖
 
-1. 用户系统。[nsp-user](https://github.com/cuo9958/nps-cms)
+1. 用户系统。[nsp-user](https://github.com/cuo9958/nps-user)
