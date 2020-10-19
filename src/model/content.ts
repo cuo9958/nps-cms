@@ -1,50 +1,57 @@
 import { Model, DataTypes } from "sequelize";
 import db from "../db//mysql";
 
-interface CategoryAttr {
+interface ContentAttr {
     id: number;
     title: string;
-    pid: number;
+    cid: number;
     status: number;
     remark: string;
     img: string;
+    txts: string;
 }
 /**
  * 文档分类
  * 可以创建多级
  */
-class Category extends Model<CategoryAttr> implements CategoryAttr {
+class Content extends Model<ContentAttr> implements ContentAttr {
     public id!: number;
     public title!: string;
     public status: number;
-    public pid: number;
     public remark: string;
     public img: string;
+    public cid: number;
+    public txts: string;
 
-    public dataValues: CategoryAttr;
+    public dataValues: ContentAttr;
 }
 
-Category.init(
+Content.init(
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
+        cid: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            comment: "分类的id",
+        },
         title: {
             type: DataTypes.STRING(20),
             defaultValue: "",
             comment: "分类标题",
         },
-        pid: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-            comment: "分类的上级id",
-        },
         remark: {
             type: DataTypes.STRING(200),
             defaultValue: "",
             comment: "分类备注",
+        },
+        txts: {
+            type: DataTypes.TEXT,
+            defaultValue: "",
+            comment: "文档内容",
         },
         img: {
             type: DataTypes.STRING(100),
@@ -60,44 +67,41 @@ Category.init(
     {
         sequelize: db,
         freezeTableName: true,
-        tableName: "t_category",
+        tableName: "t_content",
         indexes: [],
     }
 );
 
-//强制初始化数据库
-// Category.sync({ force: true });
-
 export default {
-    sync: (force = true) => Category.sync({ force }),
+    sync: (force = true) => Content.sync({ force }),
     insert: function (model: any) {
-        return Category.create(model);
+        return Content.create(model);
     },
     update(model: any, id: number) {
-        return Category.update(model, {
+        return Content.update(model, {
             where: { id },
         });
     },
     get: function (id: number) {
-        return Category.findOne({
+        return Content.findOne({
             where: {
                 id,
             },
         });
     },
-    search(pageIndex = 0, pid = 0, limit = 20) {
+    search(pageIndex = 0, opts: any, limit = 20) {
         if (limit > 100) limit = 100;
-        return Category.findAndCountAll({
+        return Content.findAndCountAll({
             offset: pageIndex * limit,
             limit,
-            where: { pid },
+            where: opts,
             order: [["id", "desc"]],
         });
     },
     del(id: number) {
         id = id * 1;
         if (isNaN(id) || id === 0) return null;
-        return Category.destroy({
+        return Content.destroy({
             where: { id },
         });
     },
