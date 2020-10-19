@@ -16,8 +16,11 @@ export function CheckUser(...UserType: number[]) {
         }
         try {
             const model = await usermudole.Auth(username, token);
-            if (!model) {
+            if (!model || model.user_type === undefined) {
                 return (ctx.body = ErrorData("还没有登录"));
+            }
+            if (!UserType.includes(model.user_type)) {
+                return (ctx.body = ErrorData("没有权限"));
             }
             ctx.session.user = model;
             await next();
