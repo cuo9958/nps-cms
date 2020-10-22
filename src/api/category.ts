@@ -8,9 +8,20 @@ const router = new Router();
 
 //获取分类列表
 router.get("/", async function (ctx) {
-    const { pageIndex, pid } = ctx.query;
+    const { pageIndex, pid, pkey } = ctx.query;
     try {
-        const data = await CategoryModel.search(pageIndex, pid);
+        const data = await CategoryModel.search(pid, pkey, pageIndex);
+        ctx.body = SuccessData(data);
+    } catch (error) {
+        console.log(error);
+        ctx.body = ErrorData(error.message);
+    }
+});
+//获取单个分类信息
+router.get("/key/:pkey", async function (ctx) {
+    const { pkey } = ctx.params;
+    try {
+        const data = await CategoryModel.getByKey(pkey);
         ctx.body = SuccessData(data);
     } catch (error) {
         console.log(error);

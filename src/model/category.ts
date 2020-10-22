@@ -5,6 +5,7 @@ interface CategoryAttr {
     id: number;
     title: string;
     pid: number;
+    pkey: string;
     status: number;
     remark: string;
     img: string;
@@ -18,6 +19,7 @@ class Category extends Model<CategoryAttr> implements CategoryAttr {
     public title!: string;
     public status: number;
     public pid: number;
+    public pkey: string;
     public remark: string;
     public img: string;
 
@@ -40,6 +42,11 @@ Category.init(
             type: DataTypes.INTEGER,
             defaultValue: 0,
             comment: "分类的上级id",
+        },
+        pkey: {
+            type: DataTypes.STRING(20),
+            defaultValue: "",
+            comment: "分类的key值",
         },
         remark: {
             type: DataTypes.STRING(200),
@@ -85,12 +92,22 @@ export default {
             },
         });
     },
-    search(pageIndex = 0, pid = 0, limit = 20) {
+    getByKey(pkey:string){
+        return Category.findOne({
+            where: {
+                pkey,
+            },
+        });
+    },
+    search(pid, pkey, pageIndex = 0, limit = 20) {
         if (limit > 100) limit = 100;
+        let opts: any = {};
+        if (pid !== undefined) opts.pid = pid;
+        if (pkey !== undefined) opts.pkey = pkey;
         return Category.findAndCountAll({
             offset: pageIndex * limit,
             limit,
-            where: { pid },
+            where: opts,
             order: [["id", "desc"]],
         });
     },
